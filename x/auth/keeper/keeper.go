@@ -88,7 +88,6 @@ func (a AccountsIndexes) IndexesList() []collections.Index[sdk.AccAddress, sdk.A
 type AccountKeeper struct {
 	addressCodec          address.Codec
 	validatorAddressCodec address.Codec
-	consensusAddressCodec address.Codec
 
 	storeService store.KVStoreService
 	cdc          codec.BinaryCodec
@@ -119,7 +118,7 @@ var _ AccountKeeperI = &AccountKeeper{}
 // may use auth.Keeper to access the accounts permissions map.
 func NewAccountKeeper(
 	cdc codec.BinaryCodec, storeService store.KVStoreService, proto func() sdk.AccountI,
-	maccPerms map[string][]string, ac, vac, cac address.Codec, bech32Prefix, authority string,
+	maccPerms map[string][]string, ac, vac address.Codec, bech32Prefix, authority string,
 ) AccountKeeper {
 	permAddrs := make(map[string]types.PermissionsForAddress)
 	for name, perms := range maccPerms {
@@ -131,7 +130,6 @@ func NewAccountKeeper(
 	ak := AccountKeeper{
 		addressCodec:          ac,
 		validatorAddressCodec: vac,
-		consensusAddressCodec: cac,
 		bech32Prefix:          bech32Prefix,
 		storeService:          storeService,
 		proto:                 proto,
@@ -164,11 +162,6 @@ func (ak AccountKeeper) AddressCodec() address.Codec {
 // ValidatorAddressCodec returns the x/auth validator address codec.
 func (ak AccountKeeper) ValidatorAddressCodec() address.Codec {
 	return ak.validatorAddressCodec
-}
-
-// ConsensusAddressCodec returns the x/auth consensus address codec.
-func (ak AccountKeeper) ConsensusAddressCodec() address.Codec {
-	return ak.consensusAddressCodec
 }
 
 // Logger returns a module-specific logger.

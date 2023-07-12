@@ -85,7 +85,6 @@ func initDeterministicFixture(t *testing.T) *deterministicFixture {
 		maccPerms,
 		addresscodec.NewBech32Codec(sdk.Bech32MainPrefix),
 		addresscodec.NewBech32Codec(sdk.Bech32PrefixValAddr),
-		addresscodec.NewBech32Codec(sdk.Bech32PrefixConsAddr),
 		sdk.Bech32MainPrefix,
 		authority.String(),
 	)
@@ -314,7 +313,8 @@ func TestGRPCQueryParams(t *testing.T) {
 			DefaultSendEnabled: rapid.Bool().Draw(rt, "send"),
 		}
 
-		f.bankKeeper.SetParams(f.ctx, params)
+		err := f.bankKeeper.SetParams(f.ctx, params)
+		assert.NilError(t, err)
 
 		req := &banktypes.QueryParamsRequest{}
 		testdata.DeterministicIterations(f.ctx, t, req, f.queryClient.Params, 0, true)
@@ -330,8 +330,8 @@ func TestGRPCQueryParams(t *testing.T) {
 		DefaultSendEnabled: false,
 	}
 
-	f.bankKeeper.SetParams(f.ctx, params)
-
+	err := f.bankKeeper.SetParams(f.ctx, params)
+	assert.NilError(t, err)
 	req := &banktypes.QueryParamsRequest{}
 	testdata.DeterministicIterations(f.ctx, t, req, f.queryClient.Params, 1003, false)
 }

@@ -119,8 +119,10 @@ func TestRunMigrations(t *testing.T) {
 	}
 
 	// Initialize the chain
-	app.InitChain(&abci.RequestInitChain{})
-	app.Commit()
+	_, err := app.InitChain(&abci.RequestInitChain{})
+	require.NoError(t, err)
+	_, err = app.Commit()
+	require.NoError(t, err)
 
 	testCases := []struct {
 		name         string
@@ -316,23 +318,19 @@ func (c customAddressCodec) BytesToString(bz []byte) (string, error) {
 func TestAddressCodecFactory(t *testing.T) {
 	var addrCodec address.Codec
 	var valAddressCodec authtypes.ValidatorAddressCodec
-	var consensusAddressCodec authtypes.ConsensusAddressCodec
 
 	err := depinject.Inject(
 		depinject.Configs(
 			network.MinimumAppConfig(),
 			depinject.Supply(log.NewNopLogger()),
 		),
-		&addrCodec, &valAddressCodec, &consensusAddressCodec)
+		&addrCodec, &valAddressCodec)
 	require.NoError(t, err)
 	require.NotNil(t, addrCodec)
 	_, ok := addrCodec.(customAddressCodec)
 	require.False(t, ok)
 	require.NotNil(t, valAddressCodec)
 	_, ok = valAddressCodec.(customAddressCodec)
-	require.False(t, ok)
-	require.NotNil(t, consensusAddressCodec)
-	_, ok = consensusAddressCodec.(customAddressCodec)
 	require.False(t, ok)
 
 	// Set the address codec to the custom one
@@ -343,18 +341,14 @@ func TestAddressCodecFactory(t *testing.T) {
 				log.NewNopLogger(),
 				func() address.Codec { return customAddressCodec{} },
 				func() authtypes.ValidatorAddressCodec { return customAddressCodec{} },
-				func() authtypes.ConsensusAddressCodec { return customAddressCodec{} },
 			),
 		),
-		&addrCodec, &valAddressCodec, &consensusAddressCodec)
+		&addrCodec, &valAddressCodec)
 	require.NoError(t, err)
 	require.NotNil(t, addrCodec)
 	_, ok = addrCodec.(customAddressCodec)
 	require.True(t, ok)
 	require.NotNil(t, valAddressCodec)
 	_, ok = valAddressCodec.(customAddressCodec)
-	require.True(t, ok)
-	require.NotNil(t, consensusAddressCodec)
-	_, ok = consensusAddressCodec.(customAddressCodec)
 	require.True(t, ok)
 }

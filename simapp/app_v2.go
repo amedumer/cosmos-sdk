@@ -142,7 +142,6 @@ func NewSimApp(
 				//
 				// func() address.Codec { return <- custom address codec type -> }
 				// func() auth.ValidatorAddressCodec { return <- custom validator address codec type -> }
-				// func() auth.ConsensusAddressCodec { return <- custom consensus address codec type -> }
 
 				//
 				// MINT
