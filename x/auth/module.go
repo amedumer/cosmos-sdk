@@ -209,8 +209,8 @@ func ProvideAddressCodec(in AddressCodecInputs) (address.Codec, types.ValidatorA
 	}
 
 	// if one of the factories is provided, all of them must be provided
-	if in.AddressCodecFactory == nil || in.ValidatorAddressCodecFactory == nil || in.ConsensusAddressCodecFactory == nil {
-		panic("either both or none of AddressCodecFactory, ValidatorAddressCodecFactory and ConsensusAddressCodecFactory must be provided")
+	if in.AddressCodecFactory != nil || in.ValidatorAddressCodecFactory != nil || in.ConsensusAddressCodecFactory != nil {
+		panic("either all or none of AddressCodecFactory, ValidatorAddressCodecFactory and ConsensusAddressCodecFactory must be provided")
 	}
 
 	if in.Config.Bech32PrefixValidator == "" {
